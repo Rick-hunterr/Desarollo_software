@@ -1,0 +1,175 @@
+
+/* 1. Fondo Oscuro y Tipografía */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Oscurecemos más la imagen para que el "neón" resalte */
+    background-image: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url('fondo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: #e2e8f0; /* Texto en un gris muy claro, no blanco puro */
+    margin: 0;
+    padding: 0;
+    line-height: 1.8;
+}
+
+/* 2. Título principal con efecto de degradado brillante */
+header {
+    text-align: center;
+    padding: 5rem 1rem 3rem 1rem;
+}
+
+header h1 {
+    font-size: 3.5rem;
+    /* Efecto de texto con colores tecnológicos */
+    background: linear-gradient(90deg, #00f2fe, #4facfe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+    letter-spacing: 2px;
+}
+
+/* 3. Barra de navegación tipo "Cristal" */
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 1.2rem;
+    position: sticky;
+    top: 0;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(15px); /* Desenfoca lo que hay detrás */
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+nav a {
+    color: #a0aec0;
+    text-decoration: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+nav a:hover {
+    color: #00f2fe;
+    text-shadow: 0 0 10px rgba(0, 242, 254, 0.6); /* Brillo al pasar el mouse */
+}
+
+/* 4. Estructura principal */
+main {
+    max-width: 900px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+/* 5. TARJETAS COMPLEJAS: Glassmorphism y Hover */
+.card {
+    background: rgba(255, 255, 255, 0.03); /* Casi transparente */
+    backdrop-filter: blur(12px); /* El efecto cristal central */
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08); /* Borde súper fino */
+    border-radius: 16px;
+    padding: 3rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border 0.4s ease;
+    animation: aparecer 1s ease-out backwards; /* Animación al cargar la página */
+}
+
+/* Retrasos en la animación para que aparezcan en cascada */
+.card:nth-child(1) { animation-delay: 0.2s; }
+.card:nth-child(2) { animation-delay: 0.4s; }
+.card:nth-child(3) { animation-delay: 0.6s; }
+.card:nth-child(4) { animation-delay: 0.8s; }
+.card:nth-child(5) { animation-delay: 1.0s; }
+
+/* Efecto al pasar el mouse sobre la tarjeta */
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 242, 254, 0.15);
+    border: 1px solid rgba(0, 242, 254, 0.4); /* El borde se ilumina */
+}
+
+.card h2 {
+    color: #00f2fe;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 1rem;
+    margin-top: 0;
+    font-weight: 400;
+    letter-spacing: 2px;
+}
+
+/* Animación de entrada de las tarjetas */
+@keyframes aparecer {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 6. Estilos avanzados para la Trivia */
+.opciones-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn-opcion {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    padding: 15px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.btn-opcion:hover:not(:disabled) {
+    background: rgba(0, 242, 254, 0.1);
+    border-color: #00f2fe;
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.2); /* Botones que brillan */
+    transform: translateX(10px); /* Se mueven un poquito a la derecha */
+}
+
+.correcta {
+    background-color: rgba(46, 204, 113, 0.2) !important;
+    border-color: #2ecc71 !important;
+    color: #2ecc71 !important;
+}
+
+.incorrecta {
+    background-color: rgba(231, 76, 60, 0.2) !important;
+    border-color: #e74c3c !important;
+    color: #e74c3c !important;
+}
+
+#siguiente-btn, #reiniciar-btn {
+    background: linear-gradient(90deg, #00f2fe, #4facfe);
+    color: #0f172a;
+    font-weight: bold;
+    border: none;
+    padding: 12px 25px;
+    margin-top: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#siguiente-btn:hover, #reiniciar-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+}
+
+footer {
+    text-align: center;
+    padding: 3rem;
+    color: #64748b;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 3rem;
+}
