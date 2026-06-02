@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Desarrollo de Software</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ── QR BAR ──────────────────────────────────────────────────────────── -->
+    <!-- Popover de hover (desktop) + modal full-screen (click/toque) -->
+    <div id="qr-bar">
+        <button
+            id="qr-btn"
+            aria-haspopup="dialog"
+            aria-expanded="false"
+            aria-label="Mostrar código QR de esta página"
+        >
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 3h7v7H3V3zm2 2v3h3V5H5zm9-2h7v7h-7V3zm2 2v3h3V5h-3zM3 14h7v7H3v-7zm2 2v3h3v-3H5zm11-2h2v2h-2v-2zm2 2h2v2h-2v-2zm-2 2h2v2h-2v-2zm2 2h2v2h-2v-2zm-4-6h2v2h-2v-2zm4-4h2v2h-2v-2z"/>
+            </svg>
+            Mostrar QR
+        </button>
+
+        <!-- Popover de hover — visible solo en desktop mediante CSS -->
+        <div
+            id="qr-popover"
+            class="qr-popover"
+            aria-hidden="true"
+            role="tooltip"
+        >
+            <img
+                src="qr.jpg"
+                srcset="qr.jpg 1x, qr.jpg 2x"
+                alt="Código QR que apunta a esta página"
+                width="280"
+                height="280"
+                loading="eager"
+                decoding="async"
+                onerror="this.closest('.qr-popover').querySelector('.qr-fallback').style.display='block'; this.style.display='none';"
+            >
+            <span class="qr-fallback" style="display:none">⚠️ qr.jpg no encontrado</span>
+            <p>Escaneá para abrir esta página</p>
+        </div>
+    </div>
+
+    <!-- ── MODAL FULL-SCREEN ────────────────────────────────────────────────── -->
+    <div
+        id="qr-modal"
+        class="qr-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Código QR de esta página"
+        aria-hidden="true"
+    >
+        <div class="qr-modal-inner">
+            <button id="qr-modal-close" class="qr-modal-close" aria-label="Cerrar modal QR">✕</button>
+            <p class="qr-modal-title">Escaneá este QR</p>
+            <img
+                src="qr.jpg"
+                alt="Código QR que apunta a esta página"
+                class="qr-modal-img"
+                width="340"
+                height="340"
+                loading="eager"
+                onerror="this.nextElementSibling.style.display='block'; this.style.display='none';"
+            >
+            <span class="qr-fallback" style="display:none">⚠️ qr.jpg no encontrado</span>
+            <p class="qr-modal-url" id="qr-modal-url"></p>
+        </div>
+    </div>
+
+    <!-- ── CONTENIDO ────────────────────────────────────────────────────────── -->
+    <header>
+        <h1>El Mundo del Desarrollo de Software</h1>
+        <p>Una exploración de la tecnología que mueve al mundo actual</p>
+    </header>
+
+    <nav>
+        <a href="index.html">¿Qué es?</a>
+        <a href="historia.html">Historia</a>
+        <a href="ciclo.html">El Ciclo (SDLC)</a>
+        <a href="etica.html">Dilemas Éticos</a>
+        <a href="trivia.html">Trivia Interactiva</a>
+    </nav>
+
+    <main>
+        <section id="intro" class="card">
+            <h2>1. ¿Qué es y cómo funciona?</h2>
+            <p>El desarrollo de software es el proceso de concebir, diseñar, programar, probar y mantener aplicaciones. Funciona traduciendo las necesidades humanas a código fuente que una computadora puede ejecutar.</p>
+            <ul>
+                <li><strong>Importancia:</strong> Es la columna vertebral de la economía digital.</li>
+                <li><strong>Evolución:</strong> De modelos rígidos a metodologías Ágiles apoyadas por Inteligencia Artificial.</li>
+            </ul>
+        </section>
+
+        <section id="logica-estricta" class="card">
+            <h2>2. Lógica y Reglas de Programación</h2>
+            <p>Para que los sistemas sean seguros a gran escala, el desarrollo exige una lógica impecable desde sus bases iniciales. Es fundamental aplicar reglas estrictas de escritura, tales como:</p>
+            <ul>
+                <li>La definición explícita y obligatoria de cada variable antes de utilizarla.</li>
+                <li>El uso riguroso del punto y coma (;) al final de cada instrucción para mantener un código limpio, prevenir errores lógicos y evitar vulnerabilidades de ciberseguridad.</li>
+            </ul>
+        </section>
+
+        <section id="tendencias" class="card">
+            <h2>3. Noticias y Tendencias (2025-2026)</h2>
+            <div class="noticia">
+                <h3>IA Agéntica en el Desarrollo</h3>
+                <p>La inteligencia artificial ha evolucionado de un simple asistente a "agentes autónomos" capaces de auditar, compilar y reescribir código de forma independiente.</p>
+            </div>
+            <div class="noticia">
+                <h3>Gobernanza y DevSecOps</h3>
+                <p>La integración de la seguridad cibernética se realiza desde el primer día de desarrollo. Además, nuevas normativas (como la SB 942 de California y la SB 24-205 de Colorado) exigen evaluaciones de impacto algorítmico y marcas de agua en la IA.</p>
+            </div>
+        </section>
+
+        <section id="casos-uso" class="card">
+            <h2>4. Casos de Uso Reales</h2>
+            <p>Los sistemas de transacciones diarias, como las plataformas web y aplicaciones móviles de entidades bancarias (por ejemplo, Banco Macro o Banco Nación en la provincia de Córdoba), dependen exclusivamente de arquitecturas de software robustas para encriptar datos y proteger el dinero de los usuarios en tiempo real.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>Proyecto de Investigación - Actualización Tecnológica</p>
+        <p>| <a href="https://ies21.edu.ar/" target="_blank">Sitio Web Institucional</a></p>
+        <!-- QR en footer: abre el modal al hacer clic -->
+        <button class="footer-qr-btn" id="footer-qr-btn" aria-label="Abrir QR de esta página">
+            <img src="qr.jpg" alt="QR a esta página" width="100" height="100"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+            <span style="display:none; font-size:0.75rem;">QR no disponible</span>
+        </button>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
