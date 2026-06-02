@@ -8,6 +8,14 @@
 </head>
 <body>
 
+    <div id="qr-bar" aria-hidden="false">
+        <button id="qr-btn" aria-expanded="false">Mostrar QR</button>
+        <div id="qr-popover" class="qr-popover" aria-hidden="true">
+            <img src="qr.jpg" alt="QR a esta página">
+            <p>Escanea para abrir esta página</p>
+        </div>
+    </div>
+
     <header>
         <h1>El Mundo del Desarrollo de Software</h1>
         <p>Una exploración de la tecnología que mueve al mundo actual</p>
@@ -60,6 +68,9 @@
     <footer>
         <p>Proyecto de Investigación - Actualización Tecnológica</p>
         <p> | <a href="https://ies21.edu.ar/" target="_blank">Sitio Web Institucional</a></p>
+        <a href="index.html" title="Ir a esta página">
+            <img src="qr.jpg" alt="QR a esta página" style="width:100px;height:auto;">
+        </a>
     </footer>
 </body>
 </html>

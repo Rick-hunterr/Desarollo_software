@@ -97,7 +97,6 @@ function seleccionarRespuesta(indexSeleccionado, botonPresionado) {
         botonPresionado.classList.add('incorrecta');
         mensajeResultado.textContent = "Incorrecto!";
         mensajeResultado.style.color = "#e74c3c";
-        // Pintar de verde la que era correcta
         botones[preguntaActual.respuestaCorrecta].classList.add('correcta');
     }
 
@@ -114,7 +113,6 @@ botonSiguiente.addEventListener('click', () => {
     }
 });
 
-// Función para mostrar pantalla final
 function mostrarResultados() {
     contenedorQuiz.style.display = 'none';
     contenedorPuntuacion.style.display = 'block';
@@ -130,3 +128,26 @@ botonReiniciar.addEventListener('click', () => {
 });
 
 cargarPregunta();
+
+(function(){
+    const qrBtn = document.getElementById('qr-btn');
+    const qrPopover = document.getElementById('qr-popover');
+    if (!qrBtn || !qrPopover) return;
+
+    let pinned = false;
+
+    function show() { qrPopover.classList.add('show'); qrPopover.setAttribute('aria-hidden','false'); }
+    function hide() { qrPopover.classList.remove('show'); qrPopover.setAttribute('aria-hidden','true'); }
+
+    qrBtn.addEventListener('click', () => {
+        pinned = !pinned;
+        qrBtn.setAttribute('aria-expanded', String(pinned));
+        if (pinned) show(); else hide();
+    });
+
+    qrBtn.addEventListener('mouseenter', () => { if (!pinned) show(); });
+    qrBtn.addEventListener('mouseleave', () => { if (!pinned) hide(); });
+
+    qrPopover.addEventListener('mouseenter', () => { if (!pinned) show(); });
+    qrPopover.addEventListener('mouseleave', () => { if (!pinned) hide(); });
+})();
