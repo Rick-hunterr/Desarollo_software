@@ -208,11 +208,13 @@ footer {
 }
 
 .qr-popover img {
-    width: 110px;
+    width: 260px;
+    max-width: 90vw;
     height: auto;
     display: block;
-    border-radius: 6px;
+    border-radius: 8px;
     background: white;
+    padding: 6px;
 }
 
 .qr-popover p {
@@ -223,6 +225,23 @@ footer {
 
 .qr-popover.show {
     display: flex;
+}
+
+/* Responsive: make QR larger on small screens and center under the bar */
+@media (max-width: 600px) {
+    #qr-bar { left: 50%; transform: translateX(-50%); }
+    .qr-popover {
+        position: fixed;
+        top: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto;
+        padding: 14px;
+    }
+    .qr-popover img {
+        width: 80vw;
+        max-width: 320px;
+    }
 }
 
 nav { padding-top: 1.6rem; }

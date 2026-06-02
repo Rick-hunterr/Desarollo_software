@@ -54,100 +54,100 @@ const preguntas = [
 let preguntaActualIndex = 0;
 let puntuacion = 0;
 
-const elementoPregunta = document.getElementById('pregunta');
-const contenedorOpciones = document.getElementById('opciones');
-const botonSiguiente = document.getElementById('siguiente-btn');
-const contenedorQuiz = document.getElementById('quiz-container');
-const contenedorPuntuacion = document.getElementById('puntuacion-container');
-const textoPuntuacion = document.getElementById('puntuacion-final');
-const botonReiniciar = document.getElementById('reiniciar-btn');
-const mensajeResultado = document.getElementById('mensaje-resultado');
+document.addEventListener('DOMContentLoaded', () => {
+    const elementoPregunta = document.getElementById('pregunta');
+    const contenedorOpciones = document.getElementById('opciones');
+    const botonSiguiente = document.getElementById('siguiente-btn');
+    const contenedorQuiz = document.getElementById('quiz-container');
+    const contenedorPuntuacion = document.getElementById('puntuacion-container');
+    const textoPuntuacion = document.getElementById('puntuacion-final');
+    const botonReiniciar = document.getElementById('reiniciar-btn');
+    const mensajeResultado = document.getElementById('mensaje-resultado');
 
-function cargarPregunta() {
-    contenedorOpciones.innerHTML = '';
-    mensajeResultado.textContent = '';
-    botonSiguiente.style.display = 'none';
+    function cargarPregunta() {
+        if (!contenedorOpciones || !elementoPregunta) return;
+        contenedorOpciones.innerHTML = '';
+        if (mensajeResultado) mensajeResultado.textContent = '';
+        if (botonSiguiente) botonSiguiente.style.display = 'none';
 
-    const preguntaActual = preguntas[preguntaActualIndex];
-    elementoPregunta.textContent = preguntaActual.pregunta;
+        const preguntaActual = preguntas[preguntaActualIndex];
+        elementoPregunta.textContent = preguntaActual.pregunta;
 
-    preguntaActual.opciones.forEach((opcion, index) => {
-        const boton = document.createElement('button');
-        boton.textContent = opcion;
-        boton.classList.add('btn-opcion');
-        
-        boton.addEventListener('click', () => seleccionarRespuesta(index, boton));
-        
-        contenedorOpciones.appendChild(boton);
-    });
-}
-
-function seleccionarRespuesta(indexSeleccionado, botonPresionado) {
-    const preguntaActual = preguntas[preguntaActualIndex];
-    const botones = contenedorOpciones.querySelectorAll('.btn-opcion');
-
-    botones.forEach(btn => btn.disabled = true);
-
-    if (indexSeleccionado === preguntaActual.respuestaCorrecta) {
-        botonPresionado.classList.add('correcta');
-        mensajeResultado.textContent = "¡Correcto! ";
-        mensajeResultado.style.color = "#2ecc71";
-        puntuacion++;
-    } else {
-        botonPresionado.classList.add('incorrecta');
-        mensajeResultado.textContent = "Incorrecto!";
-        mensajeResultado.style.color = "#e74c3c";
-        botones[preguntaActual.respuestaCorrecta].classList.add('correcta');
+        preguntaActual.opciones.forEach((opcion, index) => {
+            const boton = document.createElement('button');
+            boton.textContent = opcion;
+            boton.classList.add('btn-opcion');
+            boton.addEventListener('click', () => seleccionarRespuesta(index, boton));
+            contenedorOpciones.appendChild(boton);
+        });
     }
 
-    botonSiguiente.style.display = 'block';
-}
+    function seleccionarRespuesta(indexSeleccionado, botonPresionado) {
+        const preguntaActual = preguntas[preguntaActualIndex];
+        const botones = contenedorOpciones.querySelectorAll('.btn-opcion');
+        botones.forEach(btn => btn.disabled = true);
 
-botonSiguiente.addEventListener('click', () => {
-    preguntaActualIndex++;
-    
-    if (preguntaActualIndex < preguntas.length) {
-        cargarPregunta();
-    } else {
-        mostrarResultados();
+        if (indexSeleccionado === preguntaActual.respuestaCorrecta) {
+            botonPresionado.classList.add('correcta');
+            if (mensajeResultado) { mensajeResultado.textContent = "¡Correcto! "; mensajeResultado.style.color = "#2ecc71"; }
+            puntuacion++;
+        } else {
+            botonPresionado.classList.add('incorrecta');
+            if (mensajeResultado) { mensajeResultado.textContent = "Incorrecto!"; mensajeResultado.style.color = "#e74c3c"; }
+            if (botones[preguntaActual.respuestaCorrecta]) botones[preguntaActual.respuestaCorrecta].classList.add('correcta');
+        }
+
+        if (botonSiguiente) botonSiguiente.style.display = 'block';
     }
-});
 
-function mostrarResultados() {
-    contenedorQuiz.style.display = 'none';
-    contenedorPuntuacion.style.display = 'block';
-    textoPuntuacion.textContent = `Acertaste ${puntuacion} de ${preguntas.length} preguntas.`;
-}
+    if (botonSiguiente) {
+        botonSiguiente.addEventListener('click', () => {
+            preguntaActualIndex++;
+            if (preguntaActualIndex < preguntas.length) {
+                cargarPregunta();
+            } else {
+                if (contenedorQuiz && contenedorPuntuacion && textoPuntuacion) {
+                    contenedorQuiz.style.display = 'none';
+                    contenedorPuntuacion.style.display = 'block';
+                    textoPuntuacion.textContent = `Acertaste ${puntuacion} de ${preguntas.length} preguntas.`;
+                }
+            }
+        });
+    }
 
-botonReiniciar.addEventListener('click', () => {
-    preguntaActualIndex = 0;
-    puntuacion = 0;
-    contenedorQuiz.style.display = 'block';
-    contenedorPuntuacion.style.display = 'none';
-    cargarPregunta();
-});
+    if (botonReiniciar) {
+        botonReiniciar.addEventListener('click', () => {
+            preguntaActualIndex = 0;
+            puntuacion = 0;
+            if (contenedorQuiz && contenedorPuntuacion) {
+                contenedorQuiz.style.display = 'block';
+                contenedorPuntuacion.style.display = 'none';
+            }
+            cargarPregunta();
+        });
+    }
 
-cargarPregunta();
+    // Inicializar quiz solo si los elementos existen
+    if (elementoPregunta && contenedorOpciones) cargarPregunta();
 
-(function(){
+    // QR button behavior: hover shows popover, click pins/unpins
     const qrBtn = document.getElementById('qr-btn');
     const qrPopover = document.getElementById('qr-popover');
-    if (!qrBtn || !qrPopover) return;
+    if (qrBtn && qrPopover) {
+        let pinned = false;
+        function show() { qrPopover.classList.add('show'); qrPopover.setAttribute('aria-hidden','false'); }
+        function hide() { qrPopover.classList.remove('show'); qrPopover.setAttribute('aria-hidden','true'); }
 
-    let pinned = false;
+        qrBtn.addEventListener('click', () => {
+            pinned = !pinned;
+            qrBtn.setAttribute('aria-expanded', String(pinned));
+            if (pinned) show(); else hide();
+        });
 
-    function show() { qrPopover.classList.add('show'); qrPopover.setAttribute('aria-hidden','false'); }
-    function hide() { qrPopover.classList.remove('show'); qrPopover.setAttribute('aria-hidden','true'); }
+        qrBtn.addEventListener('mouseenter', () => { if (!pinned) show(); });
+        qrBtn.addEventListener('mouseleave', () => { if (!pinned) hide(); });
 
-    qrBtn.addEventListener('click', () => {
-        pinned = !pinned;
-        qrBtn.setAttribute('aria-expanded', String(pinned));
-        if (pinned) show(); else hide();
-    });
-
-    qrBtn.addEventListener('mouseenter', () => { if (!pinned) show(); });
-    qrBtn.addEventListener('mouseleave', () => { if (!pinned) hide(); });
-
-    qrPopover.addEventListener('mouseenter', () => { if (!pinned) show(); });
-    qrPopover.addEventListener('mouseleave', () => { if (!pinned) hide(); });
-})();
+        qrPopover.addEventListener('mouseenter', () => { if (!pinned) show(); });
+        qrPopover.addEventListener('mouseleave', () => { if (!pinned) hide(); });
+    }
+});
