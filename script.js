@@ -1,8 +1,18 @@
+/* ============================================================
+   script.js — Desarrollo de Software
+   - QR: hover → popover (desktop); click/tap → modal full-screen
+   - Modal: Esc cierra, foco gestionado, aria-hidden toggled
+   - Quiz: carga preguntas en trivia.html
+   ============================================================ */
+
+'use strict';
+
+// ── Preguntas de la trivia ────────────────────────────────────
 const preguntas = [
     {
         pregunta: "¿Quién es considerada la primera programadora de la historia?",
         opciones: ["Marie Curie", "Ada Lovelace", "Grace Hopper", "Margaret Hamilton"],
-        respuestaCorrecta: 1 
+        respuestaCorrecta: 1
     },
     {
         pregunta: "¿Qué significa la sigla SDLC en desarrollo de software?",
@@ -45,30 +55,172 @@ const preguntas = [
         respuestaCorrecta: 1
     },
     {
-        pregunta: "¿Cuál de estas metodologías de trabajo es conocida por ser rápida, flexible y continua?",
+        pregunta: "¿Cuál de estas metodologías es conocida por ser rápida, flexible y continua?",
         opciones: ["Metodología Ágil", "Modelo Lineal en Cascada", "Desarrollo Analógico"],
         respuestaCorrecta: 0
     }
 ];
 
-let preguntaActualIndex = 0;
-let puntuacion = 0;
-
 document.addEventListener('DOMContentLoaded', () => {
-    const elementoPregunta = document.getElementById('pregunta');
-    const contenedorOpciones = document.getElementById('opciones');
-    const botonSiguiente = document.getElementById('siguiente-btn');
-    const contenedorQuiz = document.getElementById('quiz-container');
+
+    /* ══════════════════════════════════════════════════════════
+       QR — POPOVER (hover, desktop) + MODAL (click/tap)
+    ══════════════════════════════════════════════════════════ */
+
+    const qrBtn        = document.getElementById('qr-btn');
+    const qrPopover    = document.getElementById('qr-popover');
+    const qrModal      = document.getElementById('qr-modal');
+    const qrModalClose = document.getElementById('qr-modal-close');
+    const qrModalUrl   = document.getElementById('qr-modal-url');
+    const footerQrBtn  = document.getElementById('footer-qr-btn');
+
+    // Detección táctil: en dispositivos táctiles desactivamos hover-popover
+    const isTouch = () => window.matchMedia('(hover: none)').matches;
+
+    // ── Modal helpers ─────────────────────────────────────────
+    let previouslyFocused = null; // restore foco al cerrar
+
+    function openModal() {
+        if (!qrModal) return;
+        previouslyFocused = document.activeElement;
+
+        // Escribir URL actual en el modal (siempre fresca)
+        if (qrModalUrl) { qrModalUrl.textContent = window.location.href; }
+
+        // Ocultar popover de hover si estaba visible
+        closePopover();
+
+        qrModal.classList.add('open');
+        qrModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden'; // evitar scroll de fondo
+
+        // Foco al botón cerrar
+        if (qrModalClose) { qrModalClose.focus(); }
+
+        // Marcar botón como expandido
+        if (qrBtn) { qrBtn.setAttribute('aria-expanded', 'true'); }
+    }
+
+    function closeModal() {
+        if (!qrModal) return;
+        qrModal.classList.remove('open');
+        qrModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+
+        if (qrBtn) { qrBtn.setAttribute('aria-expanded', 'false'); }
+
+        // Devolver el foco al elemento que lo tenía antes
+        if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
+            previouslyFocused.focus();
+        }
+    }
+
+    // ── Popover helpers (desktop hover) ──────────────────────
+    function showPopover() {
+        if (!qrPopover || isTouch()) return;
+        qrPopover.classList.add('show');
+        qrPopover.setAttribute('aria-hidden', 'false');
+    }
+
+    function closePopover() {
+        if (!qrPopover) return;
+        qrPopover.classList.remove('show');
+        qrPopover.setAttribute('aria-hidden', 'true');
+    }
+
+    // ── Botón principal QR (barra fija) ───────────────────────
+    if (qrBtn) {
+        // Click / tap → modal
+        qrBtn.addEventListener('click', () => {
+            if (qrModal && qrModal.classList.contains('open')) {
+                closeModal();
+            } else {
+                openModal();
+            }
+        });
+
+        // Hover solo en dispositivos con puntero preciso (desktop)
+        qrBtn.addEventListener('mouseenter', () => { if (!isTouch()) showPopover(); });
+        qrBtn.addEventListener('mouseleave', () => { if (!isTouch()) closePopover(); });
+
+        // Teclado: Enter/Space ya los maneja el click nativo del botón
+    }
+
+    // Mantener popover abierto al pasar sobre él (sin cerrar al salir del btn)
+    if (qrPopover) {
+        qrPopover.addEventListener('mouseenter', () => { if (!isTouch()) showPopover(); });
+        qrPopover.addEventListener('mouseleave', () => { if (!isTouch()) closePopover(); });
+    }
+
+    // ── Botón footer QR ───────────────────────────────────────
+    if (footerQrBtn) {
+        footerQrBtn.addEventListener('click', openModal);
+    }
+
+    // ── Botón cerrar modal ────────────────────────────────────
+    if (qrModalClose) {
+        qrModalClose.addEventListener('click', closeModal);
+    }
+
+    // ── Clic en el fondo del modal (fuera del inner) lo cierra ─
+    if (qrModal) {
+        qrModal.addEventListener('click', (e) => {
+            if (e.target === qrModal) { closeModal(); }
+        });
+    }
+
+    // ── Teclado global: Esc cierra modal ─────────────────────
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && qrModal && qrModal.classList.contains('open')) {
+            closeModal();
+        }
+    });
+
+    // ── Trampa de foco dentro del modal ──────────────────────
+    // (tab cycle entre qr-modal-close y qr-modal-close ya que es el único focusable)
+    if (qrModal) {
+        qrModal.addEventListener('keydown', (e) => {
+            if (e.key !== 'Tab') return;
+            // Recopilar elementos focusables dentro del modal
+            const focusable = Array.from(
+                qrModal.querySelectorAll(
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                )
+            ).filter(el => !el.disabled);
+            if (focusable.length === 0) return;
+            const first = focusable[0];
+            const last  = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+                if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+            } else {
+                if (document.activeElement === last)  { e.preventDefault(); first.focus(); }
+            }
+        });
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       TRIVIA — solo activa si existen los elementos en el DOM
+    ══════════════════════════════════════════════════════════ */
+
+    const elementoPregunta    = document.getElementById('pregunta');
+    const contenedorOpciones  = document.getElementById('opciones');
+    const botonSiguiente      = document.getElementById('siguiente-btn');
+    const contenedorQuiz      = document.getElementById('quiz-container');
     const contenedorPuntuacion = document.getElementById('puntuacion-container');
-    const textoPuntuacion = document.getElementById('puntuacion-final');
-    const botonReiniciar = document.getElementById('reiniciar-btn');
-    const mensajeResultado = document.getElementById('mensaje-resultado');
+    const textoPuntuacion     = document.getElementById('puntuacion-final');
+    const botonReiniciar      = document.getElementById('reiniciar-btn');
+    const mensajeResultado    = document.getElementById('mensaje-resultado');
+
+    // Salir si no hay quiz en esta página
+    if (!elementoPregunta || !contenedorOpciones) return;
+
+    let preguntaActualIndex = 0;
+    let puntuacion = 0;
 
     function cargarPregunta() {
-        if (!contenedorOpciones || !elementoPregunta) return;
         contenedorOpciones.innerHTML = '';
-        if (mensajeResultado) mensajeResultado.textContent = '';
-        if (botonSiguiente) botonSiguiente.style.display = 'none';
+        if (mensajeResultado) { mensajeResultado.textContent = ''; }
+        if (botonSiguiente)   { botonSiguiente.style.display = 'none'; }
 
         const preguntaActual = preguntas[preguntaActualIndex];
         elementoPregunta.textContent = preguntaActual.pregunta;
@@ -85,19 +237,26 @@ document.addEventListener('DOMContentLoaded', () => {
     function seleccionarRespuesta(indexSeleccionado, botonPresionado) {
         const preguntaActual = preguntas[preguntaActualIndex];
         const botones = contenedorOpciones.querySelectorAll('.btn-opcion');
-        botones.forEach(btn => btn.disabled = true);
+        botones.forEach(btn => { btn.disabled = true; });
 
         if (indexSeleccionado === preguntaActual.respuestaCorrecta) {
             botonPresionado.classList.add('correcta');
-            if (mensajeResultado) { mensajeResultado.textContent = "¡Correcto! "; mensajeResultado.style.color = "#2ecc71"; }
+            if (mensajeResultado) {
+                mensajeResultado.textContent = '¡Correcto! ✓';
+                mensajeResultado.style.color = '#2ecc71';
+            }
             puntuacion++;
         } else {
             botonPresionado.classList.add('incorrecta');
-            if (mensajeResultado) { mensajeResultado.textContent = "Incorrecto!"; mensajeResultado.style.color = "#e74c3c"; }
-            if (botones[preguntaActual.respuestaCorrecta]) botones[preguntaActual.respuestaCorrecta].classList.add('correcta');
+            if (mensajeResultado) {
+                mensajeResultado.textContent = 'Incorrecto ✗';
+                mensajeResultado.style.color = '#e74c3c';
+            }
+            const correctoBtn = botones[preguntaActual.respuestaCorrecta];
+            if (correctoBtn) { correctoBtn.classList.add('correcta'); }
         }
 
-        if (botonSiguiente) botonSiguiente.style.display = 'block';
+        if (botonSiguiente) { botonSiguiente.style.display = 'block'; }
     }
 
     if (botonSiguiente) {
@@ -105,12 +264,11 @@ document.addEventListener('DOMContentLoaded', () => {
             preguntaActualIndex++;
             if (preguntaActualIndex < preguntas.length) {
                 cargarPregunta();
-            } else {
-                if (contenedorQuiz && contenedorPuntuacion && textoPuntuacion) {
-                    contenedorQuiz.style.display = 'none';
-                    contenedorPuntuacion.style.display = 'block';
-                    textoPuntuacion.textContent = `Acertaste ${puntuacion} de ${preguntas.length} preguntas.`;
-                }
+            } else if (contenedorQuiz && contenedorPuntuacion && textoPuntuacion) {
+                contenedorQuiz.style.display = 'none';
+                contenedorPuntuacion.style.display = 'block';
+                textoPuntuacion.textContent =
+                    `Acertaste ${puntuacion} de ${preguntas.length} preguntas.`;
             }
         });
     }
@@ -119,35 +277,11 @@ document.addEventListener('DOMContentLoaded', () => {
         botonReiniciar.addEventListener('click', () => {
             preguntaActualIndex = 0;
             puntuacion = 0;
-            if (contenedorQuiz && contenedorPuntuacion) {
-                contenedorQuiz.style.display = 'block';
-                contenedorPuntuacion.style.display = 'none';
-            }
+            if (contenedorQuiz)      { contenedorQuiz.style.display = 'block'; }
+            if (contenedorPuntuacion){ contenedorPuntuacion.style.display = 'none'; }
             cargarPregunta();
         });
     }
 
-    // Inicializar quiz solo si los elementos existen
-    if (elementoPregunta && contenedorOpciones) cargarPregunta();
-
-    // QR button behavior: hover shows popover, click pins/unpins
-    const qrBtn = document.getElementById('qr-btn');
-    const qrPopover = document.getElementById('qr-popover');
-    if (qrBtn && qrPopover) {
-        let pinned = false;
-        function show() { qrPopover.classList.add('show'); qrPopover.setAttribute('aria-hidden','false'); }
-        function hide() { qrPopover.classList.remove('show'); qrPopover.setAttribute('aria-hidden','true'); }
-
-        qrBtn.addEventListener('click', () => {
-            pinned = !pinned;
-            qrBtn.setAttribute('aria-expanded', String(pinned));
-            if (pinned) show(); else hide();
-        });
-
-        qrBtn.addEventListener('mouseenter', () => { if (!pinned) show(); });
-        qrBtn.addEventListener('mouseleave', () => { if (!pinned) hide(); });
-
-        qrPopover.addEventListener('mouseenter', () => { if (!pinned) show(); });
-        qrPopover.addEventListener('mouseleave', () => { if (!pinned) hide(); });
-    }
+    cargarPregunta();
 });
